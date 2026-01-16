@@ -1,24 +1,19 @@
+# Tailscale Funnel Ingress
+# Exposes pai-daemon publicly via https://pai-daemon.tail848835.ts.net
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: pai-daemon
+  name: pai-daemon-funnel
   namespace: pai
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    tailscale.com/funnel: "true"
 spec:
-  ingressClassName: nginx
+  ingressClassName: tailscale
+  defaultBackend:
+    service:
+      name: pai-daemon
+      port:
+        number: 80
   tls:
   - hosts:
-    - pai.v10b.no
-    secretName: pai-v10b-no-tls
-  rules:
-  - host: pai.v10b.no
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: pai-daemon
-            port:
-              number: 80
+    - pai-daemon

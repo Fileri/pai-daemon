@@ -18,11 +18,20 @@ bun run dev
 | `GET /health` | Liveness probe |
 | `GET /ready` | Readiness probe |
 
+## Public Endpoint
+
+```
+https://pai-daemon.tail848835.ts.net
+```
+
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md) - System design and API reference
 - [Events](docs/EVENTS.md) - Event types and schemas
+- [Tailscale Funnel](docs/TAILSCALE-FUNNEL.md) - Public ingress setup
 
 ## Deployment
 
-Deployed to HomeLab Kubernetes cluster via FluxCD. See `k8s/` for manifests.
+Deployed to HomeLab Kubernetes cluster. Exposed publicly via Tailscale Funnel.
+
+See `k8s/` for manifests.
