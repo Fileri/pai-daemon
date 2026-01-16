@@ -1,0 +1,17 @@
+{
+  "name": "pai-daemon",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/server.ts",
+    "start": "bun run src/server.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.52.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.3",
+    "typescript": "^5.7.3"
+  }
+}
