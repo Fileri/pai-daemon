@@ -18,6 +18,7 @@ spec:
       containers:
       - name: pai-daemon
         image: ghcr.io/fileri/pai-daemon:main
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
         livenessProbe:
