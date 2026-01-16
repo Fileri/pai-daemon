@@ -13,6 +13,8 @@ spec:
       labels:
         app: pai-daemon
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
       - name: pai-daemon
         image: ghcr.io/fileri/pai-daemon:main
