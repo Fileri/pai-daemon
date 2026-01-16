@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pai-daemon
+  namespace: pai
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - pai.v10b.no
+    secretName: pai-v10b-no-tls
+  rules:
+  - host: pai.v10b.no
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: pai-daemon
+            port:
+              number: 80

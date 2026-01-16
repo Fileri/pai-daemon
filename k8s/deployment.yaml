@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pai-daemon
+  namespace: pai
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pai-daemon
+  template:
+    metadata:
+      labels:
+        app: pai-daemon
+    spec:
+      containers:
+      - name: pai-daemon
+        image: ghcr.io/fileri/pai-daemon:main
+        ports:
+        - containerPort: 3000
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 3000
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
