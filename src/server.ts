@@ -47,11 +47,15 @@ async function pushToLoki(event: PAIEvent): Promise<void> {
   };
 
   try {
-    await fetch(LOKI_PUSH_URL, {
+    const response = await fetch(LOKI_PUSH_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(lokiPayload),
     });
+    if (!response.ok) {
+      const text = await response.text();
+      console.error(`Loki push failed [${response.status}]: ${text.slice(0, 200)}`);
+    }
   } catch (error) {
     console.error("Loki push error:", error);
   }
