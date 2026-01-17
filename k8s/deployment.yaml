@@ -21,6 +21,9 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
+        env:
+        - name: LOKI_PUSH_URL
+          value: "http://loki-stack.monitoring.svc.cluster.local:3100/loki/api/v1/push"
         livenessProbe:
           httpGet:
             path: /health

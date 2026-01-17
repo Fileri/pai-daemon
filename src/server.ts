@@ -1,5 +1,6 @@
 const PORT = process.env.PORT || 3000;
 const MAX_EVENTS = 1000;
+const LOKI_PUSH_URL = process.env.LOKI_PUSH_URL || "";
 
 // Types
 interface PAIEvent {
@@ -21,6 +22,41 @@ function generateEventId(): string {
   return `evt_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
+async function pushToLoki(event: PAIEvent): Promise<void> {
+  if (!LOKI_PUSH_URL) return;
+
+  const timestampNs = String(event.timestamp * 1_000_000);
+  const logLine = JSON.stringify({
+    id: event.id,
+    source_app: event.source_app,
+    session_id: event.session_id,
+    hook_event_type: event.hook_event_type,
+    payload: event.payload,
+  });
+
+  const lokiPayload = {
+    streams: [{
+      stream: {
+        namespace: "pai",
+        app: "pai-daemon",
+        source_app: event.source_app,
+        hook_event_type: event.hook_event_type,
+      },
+      values: [[timestampNs, logLine]],
+    }],
+  };
+
+  try {
+    await fetch(LOKI_PUSH_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(lokiPayload),
+    });
+  } catch (error) {
+    console.error("Loki push error:", error);
+  }
+}
+
 function addEvent(event: PAIEvent): void {
   events.push(event);
   if (events.length > MAX_EVENTS) {
@@ -36,6 +72,9 @@ function addEvent(event: PAIEvent): void {
       wsClients.delete(client);
     }
   }
+
+  // Fire-and-forget Loki push
+  pushToLoki(event);
 }
 
 const server = Bun.serve({
