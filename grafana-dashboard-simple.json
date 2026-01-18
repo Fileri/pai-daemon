@@ -1,0 +1,101 @@
+{
+  "title": "PAI Daemon - Claude Code Sessions",
+  "uid": "pai-daemon-v2",
+  "editable": true,
+  "refresh": "10s",
+  "time": { "from": "now-1h", "to": "now" },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "User Prompts (1h)",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "datasource": "Loki",
+      "targets": [{
+        "expr": "sum(count_over_time({app=\"pai-daemon\", hook_event_type=\"UserPromptSubmit\"}[1h]))",
+        "refId": "A"
+      }],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "steps": [{ "color": "blue", "value": null }] }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Tool Uses (1h)",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "datasource": "Loki",
+      "targets": [{
+        "expr": "sum(count_over_time({app=\"pai-daemon\", hook_event_type=\"PreToolUse\"}[1h]))",
+        "refId": "A"
+      }],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "steps": [{ "color": "orange", "value": null }] }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Total Events (1h)",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "datasource": "Loki",
+      "targets": [{
+        "expr": "sum(count_over_time({app=\"pai-daemon\"}[1h]))",
+        "refId": "A"
+      }],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "steps": [{ "color": "green", "value": null }] }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Events Over Time",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 4 },
+      "datasource": "Loki",
+      "targets": [{
+        "expr": "sum by (hook_event_type) (count_over_time({app=\"pai-daemon\"}[1m]))",
+        "legendFormat": "{{hook_event_type}}",
+        "refId": "A"
+      }],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "stacking": { "mode": "normal" }
+          }
+        }
+      }
+    },
+    {
+      "type": "logs",
+      "title": "Live Event Stream",
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 12 },
+      "datasource": "Loki",
+      "targets": [{
+        "expr": "{app=\"pai-daemon\"}",
+        "refId": "A"
+      }],
+      "options": {
+        "showTime": true,
+        "sortOrder": "Descending",
+        "enableLogDetails": true
+      }
+    }
+  ],
+  "schemaVersion": 39
+}

@@ -18,6 +18,7 @@ interface PAIEvent {
   source_app: string;
   session_id: string;
   hook_event_type: string;
+  client_name?: string;
   payload: Record<string, unknown>;
   timestamp: number;
   timestamp_local: string;
@@ -146,6 +147,7 @@ const server = Bun.serve({
           source_app: body.source_app || "unknown",
           session_id: body.session_id || "unknown",
           hook_event_type: body.hook_event_type || "unknown",
+          client_name: body.client_name || body.payload?.client_name,
           payload: body.payload || body,
           timestamp: body.timestamp || Date.now(),
           timestamp_local: body.timestamp_local || new Date().toISOString(),
