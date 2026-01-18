@@ -35,3 +35,41 @@ https://pai-daemon.tail848835.ts.net
 Deployed to HomeLab Kubernetes cluster. Exposed publicly via Tailscale Funnel.
 
 See `k8s/` for manifests.
+
+## Releasing a New Version
+
+1. **Update version** in `package.json`:
+   ```bash
+   # Edit package.json: "version": "0.2.2"
+   ```
+
+2. **Commit changes**:
+   ```bash
+   git add -A
+   git commit -m "feat: description of changes"
+   ```
+
+3. **Create git tag** matching package.json version:
+   ```bash
+   git tag v0.2.2
+   ```
+
+4. **Push commits and tag**:
+   ```bash
+   git push && git push --tags
+   ```
+
+5. **Update deployment** to use new tag:
+   ```bash
+   # Edit k8s/deployment.yaml: image: ghcr.io/fileri/pai-daemon:v0.2.2
+   git add -A
+   git commit -m "chore: deploy v0.2.2"
+   git push
+   ```
+
+GitHub Actions builds on tag push. GitOps deploys when k8s/ changes.
+
+**Verify deployment**:
+```bash
+curl -s https://pai-daemon.tail848835.ts.net/version | jq .version
+```
