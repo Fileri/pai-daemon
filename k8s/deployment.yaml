@@ -17,8 +17,8 @@ spec:
         - name: ghcr-secret
       containers:
       - name: pai-daemon
-        image: ghcr.io/fileri/pai-daemon:main
-        imagePullPolicy: Always
+        image: ghcr.io/fileri/pai-daemon:v0.2.1
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
         env:
