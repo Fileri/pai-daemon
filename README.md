@@ -49,7 +49,7 @@ See `k8s/` for manifests.
    git commit -m "feat: description of changes"
    ```
 
-3. **Create git tag** matching package.json version:
+3. **Create git tag** with `v` prefix:
    ```bash
    git tag v0.2.2
    ```
@@ -59,15 +59,16 @@ See `k8s/` for manifests.
    git push && git push --tags
    ```
 
-5. **Update deployment** to use new tag:
+5. **Update deployment** (note: image tag has NO `v` prefix):
    ```bash
-   # Edit k8s/deployment.yaml: image: ghcr.io/fileri/pai-daemon:v0.2.2
+   # Edit k8s/deployment.yaml: image: ghcr.io/fileri/pai-daemon:0.2.2
    git add -A
-   git commit -m "chore: deploy v0.2.2"
+   git commit -m "chore: deploy 0.2.2"
    git push
    ```
 
-GitHub Actions builds on tag push. GitOps deploys when k8s/ changes.
+GitHub Actions builds on tag push. Docker metadata strips `v` prefix from image tags.
+GitOps deploys when k8s/ changes.
 
 **Verify deployment**:
 ```bash

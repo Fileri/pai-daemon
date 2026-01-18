@@ -6,12 +6,14 @@ Event bus for PAI observability. Runs in Kubernetes cluster.
 
 When updating this codebase, follow this process to deploy:
 
-1. **Update version** in `package.json`
+1. **Update version** in `package.json` (e.g., `"version": "0.2.2"`)
 2. **Commit** your changes
-3. **Create git tag** matching the version: `git tag v0.2.x`
+3. **Create git tag** with `v` prefix: `git tag v0.2.2`
 4. **Push commits and tag**: `git push && git push --tags`
-5. **Update `k8s/deployment.yaml`** with new image tag
+5. **Update `k8s/deployment.yaml`** image tag (WITHOUT `v` prefix): `ghcr.io/fileri/pai-daemon:0.2.2`
 6. **Commit and push** the deployment change
+
+Note: Docker metadata strips the `v` prefix, so tag `v0.2.2` becomes image `:0.2.2`
 
 GitHub Actions builds on tag push. GitOps deploys when k8s/ changes.
 
