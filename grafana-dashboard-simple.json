@@ -7,8 +7,27 @@
   "panels": [
     {
       "type": "stat",
-      "title": "User Prompts (1h)",
+      "title": "Active Sessions (1h)",
       "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "datasource": "Loki",
+      "targets": [{
+        "expr": "count(sum by (session_id) (count_over_time({app=\"pai-daemon\"}[1h])))",
+        "refId": "A"
+      }],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "steps": [{ "color": "purple", "value": null }] }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "User Prompts (1h)",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
       "datasource": "Loki",
       "targets": [{
         "expr": "sum(count_over_time({app=\"pai-daemon\", hook_event_type=\"UserPromptSubmit\"}[1h]))",
@@ -27,7 +46,7 @@
     {
       "type": "stat",
       "title": "Tool Uses (1h)",
-      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
       "datasource": "Loki",
       "targets": [{
         "expr": "sum(count_over_time({app=\"pai-daemon\", hook_event_type=\"PreToolUse\"}[1h]))",
@@ -46,7 +65,7 @@
     {
       "type": "stat",
       "title": "Total Events (1h)",
-      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
       "datasource": "Loki",
       "targets": [{
         "expr": "sum(count_over_time({app=\"pai-daemon\"}[1h]))",
@@ -64,8 +83,28 @@
     },
     {
       "type": "timeseries",
+      "title": "Sessions by Client",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "datasource": "Loki",
+      "targets": [{
+        "expr": "count by (client_name) (sum by (session_id, client_name) (count_over_time({app=\"pai-daemon\"}[5m])))",
+        "legendFormat": "{{client_name}}",
+        "refId": "A"
+      }],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 20
+          }
+        }
+      }
+    },
+    {
+      "type": "timeseries",
       "title": "Events Over Time",
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 4 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
       "datasource": "Loki",
       "targets": [{
         "expr": "sum by (hook_event_type) (count_over_time({app=\"pai-daemon\"}[1m]))",

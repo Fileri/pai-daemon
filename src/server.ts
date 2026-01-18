@@ -52,6 +52,8 @@ async function pushToLoki(event: PAIEvent): Promise<void> {
         app: "pai-daemon",
         source_app: event.source_app,
         hook_event_type: event.hook_event_type,
+        session_id: event.session_id,
+        ...(event.client_name && { client_name: event.client_name }),
       },
       values: [[timestampNs, logLine]],
     }],
