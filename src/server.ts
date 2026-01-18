@@ -1,3 +1,13 @@
+import { readFileSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+// Version info
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const packageJson = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf-8"));
+const VERSION = packageJson.version;
+const BUILD_TIME = new Date().toISOString();
+
 const PORT = process.env.PORT || 3000;
 const MAX_EVENTS = 1000;
 const LOKI_PUSH_URL = process.env.LOKI_PUSH_URL || "";
@@ -98,14 +108,31 @@ const server = Bun.serve({
 
     // Health check endpoint
     if (url.pathname === "/health") {
-      return new Response(JSON.stringify({ status: "ok" }), {
+      return new Response(JSON.stringify({
+        status: "ok",
+        version: VERSION,
+        uptime: process.uptime(),
+      }), {
         headers: { "Content-Type": "application/json" },
       });
     }
 
     // Ready check endpoint
     if (url.pathname === "/ready") {
-      return new Response(JSON.stringify({ ready: true }), {
+      return new Response(JSON.stringify({ ready: true, version: VERSION }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Version endpoint
+    if (url.pathname === "/version") {
+      return new Response(JSON.stringify({
+        name: "pai-daemon",
+        version: VERSION,
+        buildTime: BUILD_TIME,
+        runtime: "bun",
+        runtimeVersion: Bun.version,
+      }), {
         headers: { "Content-Type": "application/json" },
       });
     }
@@ -212,7 +239,9 @@ const server = Bun.serve({
   },
 });
 
-console.log(`PAI Daemon listening on port ${server.port}`);
+console.log(`PAI Daemon v${VERSION} listening on port ${server.port}`);
+console.log(`  GET  /version   - Version info`);
+console.log(`  GET  /health    - Health check`);
 console.log(`  POST /events    - Ingest events`);
 console.log(`  GET  /events    - Query events`);
 console.log(`  GET  /stats     - Event stats`);
